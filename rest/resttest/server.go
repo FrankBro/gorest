@@ -3,7 +3,7 @@
 package resttest
 
 import (
-	"github.com/datacratic/gorest/rest"
+	"github.com/RAttab/gorest/rest"
 
 	"net/http/httptest"
 )
