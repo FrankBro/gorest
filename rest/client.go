@@ -169,6 +169,14 @@ func (req *Request) AddHeader(key, value string) *Request {
 	return req
 }
 
+// SetRawBody sets the body of the request to the given set of bytes. The
+// Content-Length header will be automatically set.
+func (req *Request) SetRawBody(bytes []byte) *Request {
+	req.Body = bytes
+	req.AddHeader("Content-Length", strconv.Itoa(len(bytes)))
+	return req
+}
+
 // SetBody marshals the given objects and sets it as the body of the
 // request. The Content-Length header will be automatically set.
 func (req *Request) SetBody(obj interface{}) *Request {
