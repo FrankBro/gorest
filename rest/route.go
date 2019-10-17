@@ -87,15 +87,16 @@ func (route *Route) init() {
 	pathArgs := route.Path.NumArgs()
 	handlerArgs := route.handlerType.NumIn()
 
-	if pathArgs < handlerArgs-1 {
+	switch {
+	case pathArgs < handlerArgs-1:
 		log.Panicf("not enough path arguments for route { %s %s }: %d < %d",
 			route.Method, route.Path, pathArgs, handlerArgs-1)
 
-	} else if pathArgs > handlerArgs {
+	case pathArgs > handlerArgs:
 		log.Panicf("too many path arguments for route { %s %s }: %d > %d",
 			route.Method, route.Path, pathArgs, handlerArgs)
 
-	} else if pathArgs < handlerArgs {
+	case pathArgs < handlerArgs:
 		route.inBody = handlerArgs
 	}
 
@@ -114,7 +115,6 @@ func (route *Route) init() {
 				log.Panicf("too many error return for route %s", route)
 			}
 			route.outError = i
-
 		} else {
 			if route.outBody >= 0 {
 				log.Panicf("too many normal return for route %s", route)
@@ -126,7 +126,6 @@ func (route *Route) init() {
 
 func (route *Route) parseArg(data string, value reflect.Value) (err error) {
 	switch value.Kind() {
-
 	case reflect.String:
 		value.SetString(data)
 
@@ -159,12 +158,11 @@ func (route *Route) parseArg(data string, value reflect.Value) (err error) {
 			route.Method, route.Path, value.Kind())
 	}
 
-	return
+	return err
 }
 
 func (route *Route) isNil(obj reflect.Value) bool {
 	switch obj.Kind() {
-
 	case reflect.String:
 		return obj.Len() == 0
 
@@ -173,7 +171,6 @@ func (route *Route) isNil(obj reflect.Value) bool {
 
 	default:
 		return false
-
 	}
 }
 
@@ -215,7 +212,7 @@ func (route *Route) invoke(args []string, body []byte) ([]byte, *Error) {
 	return ret, nil
 }
 
-// String returns a string represenation of the object suitable for debugging.
+// String returns a string representation of the object suitable for debugging.
 func (route *Route) String() string {
 	return fmt.Sprintf("{ %s %s }", route.Method, route.Path)
 }

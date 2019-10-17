@@ -26,7 +26,7 @@ func (item PathItem) String() string {
 // Path is an array of PathItem which represents the templated path of an HTTP
 // query.
 //
-// The format of a path is a series of item seperated by '/' characters. An item
+// The format of a path is a series of item separated by '/' characters. An item
 // can either be a constant or an argument which starts with leading ':'
 // character. A full path examples looks like the following:
 //

@@ -40,7 +40,6 @@ func (rt *router) add(path Path, route *Route) {
 			rt.variable = new(router)
 		}
 		next = rt.variable
-
 	} else {
 		if rt.fixed == nil {
 			rt.fixed = make(map[string]*router)

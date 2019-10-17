@@ -27,28 +27,31 @@ const (
 	// request contained an unsupported value.
 	UnsupportedContentType = "unsupported-content-type"
 
-	// ReadBodyError indicates that an error occured while reading the body of
+	// ReadBodyError indicates that an error occurred while reading the body of
 	// an HTTP request or response.
 	ReadBodyError = "ready-body-error"
 
-	// NewRequestError indicates that an error occured while creating an HTTP
+	// NewRequestError indicates that an error occurred while creating an HTTP
 	// request.
 	NewRequestError = "new-request-error"
 
-	// SendRequestError indicates that an error occured while sending an HTTP
+	// SendRequestError indicates that an error occurred while sending an HTTP
 	// request.
 	SendRequestError = "send-request-error"
 
-	// UnmarshalError indicates that an error occured while deserializing the
+	// UnmarshalError indicates that an error occurred while deserializing the
 	// body of an HTTP response.
 	UnmarshalError = "unmarshal-error"
 
-	// MarshalError indicates that an error occured while serializing the body
+	// MarshalError indicates that an error occurred while serializing the body
 	// of an HTTP request.
 	MarshalError = "marshal-error"
+
+	// WriteError indicates that an error occurred while writing a response
+	WriteError = "write-error"
 )
 
-// Error is a typed wrapper for an error that occured while processing a REST
+// Error is a typed wrapper for an error that occurred while processing a REST
 // request.
 type Error struct {
 	// Type is the type of the error.

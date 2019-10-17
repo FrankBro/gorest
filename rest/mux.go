@@ -131,6 +131,10 @@ func (mux *Mux) ServeHTTP(writer http.ResponseWriter, httpReq *http.Request) {
 		header := writer.Header()
 		header.Set("Content-Type", "application/json")
 		header.Set("Content-Length", strconv.FormatInt(int64(len(resp)), 10))
-		writer.Write(resp)
+		_, err = writer.Write(resp)
+		if err != nil {
+			mux.respondError(writer, WriteError, http.StatusInternalServerError, err)
+			return
+		}
 	}
 }

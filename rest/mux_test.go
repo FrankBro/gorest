@@ -131,10 +131,8 @@ func (service *TestService) Expect(t *testing.T, title string, exp ...KV) {
 	}
 
 	for _, kv := range exp {
-
 		if val, ok := service.Map[kv.Key]; !ok {
 			t.Errorf("FAIL(%s): missing key: %s", title, kv.Key)
-
 		} else if val != kv.Val {
 			t.Errorf("FAIL(%s): value mismatch for key %s: %s != %s", title, kv.Key, kv.Val, val)
 		}
@@ -152,7 +150,6 @@ func checkRespBody(t *testing.T, title string, resp *Response, exp *KV) {
 
 	if err := resp.GetBody(&kv); err != nil {
 		t.Errorf("FAIL(%s): error %s", title, err)
-
 	} else if kv.Key != exp.Key || kv.Val != exp.Val {
 		t.Errorf("FAIL(%s): value mismatch '%s:%s' != '%s:%s'",
 			title, exp.Key, exp.Val, kv.Key, kv.Val)
@@ -209,5 +206,4 @@ func TestMuxSimple(t *testing.T) {
 
 	handler.Wait(2)
 	handler.Expect(t, "r2x", KV{"a", "1"})
-
 }

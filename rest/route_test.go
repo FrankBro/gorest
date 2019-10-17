@@ -50,7 +50,12 @@ func checkRoute(t *testing.T, handler interface{}, path string, exp ...PathItem)
 
 func failRoute(t *testing.T, handler interface{}, path string) {
 	route := func() (route *Route) {
-		defer func() { recover() }()
+		defer func() {
+			err := recover()
+			if err != nil {
+				t.Errorf("FAIL: recover returned an error: %s", err)
+			}
+		}()
 		route = NewRoute(path, "POST", handler)
 		return
 	}()
@@ -65,7 +70,6 @@ type T struct {
 }
 
 func TestRouteInit(t *testing.T) {
-
 	hNoop := func() {}
 
 	checkRoute(t, hNoop, "")
@@ -111,9 +115,9 @@ func TestRouteInit(t *testing.T) {
 }
 
 func checkInvoke(t *testing.T, route *Route, exp string, body string, args ...PathItem) {
-	var m []string
-	for _, arg := range args {
-		m = append(m, arg.Name)
+	m := make([]string, len(args))
+	for i, arg := range args {
+		m[i] = arg.Name
 	}
 
 	ret, err := route.invoke(m, []byte(body))
@@ -131,9 +135,9 @@ func checkInvoke(t *testing.T, route *Route, exp string, body string, args ...Pa
 }
 
 func failInvoke(t *testing.T, route *Route, exp ErrorType, body string, args ...PathItem) {
-	var m []string
-	for _, arg := range args {
-		m = append(m, arg.Name)
+	m := make([]string, len(args))
+	for i, arg := range args {
+		m[i] = arg.Name
 	}
 
 	ret, err := route.invoke(m, []byte(body))
@@ -288,6 +292,7 @@ func TestRouteInvokeError(t *testing.T) {
 	rErr1 := checkRoute(t, hErr1, "err/1", f("err"), f("1"))
 	failInvoke(t, rErr1, HandlerError, "")
 
+	// nolint ST1008: error should be returned as the last argument (stylecheck)
 	hErr2 := func() (error, int) { return fmt.Errorf("BOOM"), 0 }
 	rErr2 := checkRoute(t, hErr2, "err/2", f("err"), f("2"))
 	failInvoke(t, rErr2, HandlerError, "")
@@ -300,7 +305,10 @@ func BenchRouteInvoke(b *testing.B, route *Route, args []string, body []byte) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		route.invoke(args, body)
+		_, err := route.invoke(args, body)
+		if err != nil {
+			b.Errorf("FAIL: invoke returned an error: %s", err)
+		}
 	}
 }
 

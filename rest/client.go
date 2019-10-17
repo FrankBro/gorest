@@ -56,7 +56,6 @@ func (client *Client) NewRequest(method string) *Request {
 				client.end()
 			}
 		}
-
 	})
 
 	headers := make(http.Header)
@@ -183,7 +182,6 @@ func (req *Request) SetBody(obj interface{}) *Request {
 	var err error
 	if req.Body, err = json.Marshal(obj); err == nil {
 		req.AddHeader("Content-Length", strconv.Itoa(len(req.Body)))
-
 	} else {
 		req.err = &Error{MarshalError, err}
 	}
@@ -250,7 +248,6 @@ func (req *Request) send(resp *Response) {
 	}
 
 	httpResp.Body.Close()
-	return
 }
 
 // Response holds the result of a sent REST request. The response should be read
@@ -270,7 +267,7 @@ type Response struct {
 	// used to unmarshal the body.
 	Body []byte
 
-	// Error is set if an error occured while sending the request.
+	// Error is set if an error occurred while sending the request.
 	Error *Error
 
 	// Latency indicates how long the request round-trip took.
@@ -283,25 +280,19 @@ type Response struct {
 func (resp *Response) GetBody(obj interface{}) (err *Error) {
 	if resp.Error != nil {
 		err = resp.Error
-
 	} else if resp.Code == http.StatusNotFound {
 		err = &Error{UnknownRoute, errors.New(string(resp.Body))}
-
 	} else if resp.Code >= 400 {
 		err = &Error{EndpointError, errors.New(string(resp.Body))}
-
 	} else if resp.Code < 200 && resp.Code >= 300 {
 		err = ErrorFmt(UnexpectedStatusCode, "unexpected status code: %d", resp.Code)
-
 	} else if resp.Code == http.StatusNoContent {
 		if obj == nil {
 			return
 		}
 		err = ErrorFmt(UnexpectedStatusCode, "unexpected status code: 204")
-
 	} else if contentType := resp.Header.Get("Content-Type"); len(resp.Body) > 0 && contentType != "application/json" {
 		err = ErrorFmt(UnsupportedContentType, "unsupported content-type: '%s' != 'application/json'", contentType)
-
 	} else if jsonErr := json.Unmarshal(resp.Body, obj); err != nil {
 		err = &Error{UnmarshalError, jsonErr}
 	}

@@ -9,6 +9,7 @@ import (
 
 // DefaultMux is the default Mux used by Serve which uses the
 // http.DefaultServeMux as the DefaultHandler in Mux if no routes match.
+// nolint `DefaultMux` is a global variable (gochecknoglobals)
 var DefaultMux = new(Mux)
 
 // AddRoute adds a REST route to DefaultMux. See Route type for further details
@@ -23,7 +24,7 @@ func AddService(routable Routable) {
 }
 
 // Serve is a proxy for the http.Serve function but using the DefaultMux.
-func Serve(l net.Listener, mux *Mux) error {
+func Serve(l net.Listener, mux http.Handler) error {
 	if mux == nil {
 		mux = DefaultMux
 	}
@@ -34,7 +35,7 @@ func Serve(l net.Listener, mux *Mux) error {
 
 // ListenAndServe is a proxy for the http.ListenAndServe function but using the
 // DefaultMux.
-func ListenAndServe(addr string, mux *Mux) error {
+func ListenAndServe(addr string, mux http.Handler) error {
 	if mux == nil {
 		mux = DefaultMux
 	}
@@ -45,7 +46,7 @@ func ListenAndServe(addr string, mux *Mux) error {
 
 // ListenAndServeTLS is a proxy for the http.ListenAndServeTLS function but
 // using the DefaultMux.
-func ListenAndServeTLS(addr string, certFile string, keyFile string, mux *Mux) error {
+func ListenAndServeTLS(addr string, certFile string, keyFile string, mux http.Handler) error {
 	if mux == nil {
 		mux = DefaultMux
 	}

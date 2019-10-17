@@ -8,7 +8,12 @@ import (
 
 func failAdd(t *testing.T, rt *router, route *Route) {
 	ret := func() (r *Route) {
-		defer func() { recover() }()
+		defer func() {
+			err := recover()
+			if err != nil {
+				t.Errorf("Fail: recover returned an error: %s", err)
+			}
+		}()
 		r = rt.Add(route)
 		return
 	}()
@@ -16,7 +21,6 @@ func failAdd(t *testing.T, rt *router, route *Route) {
 	if ret != nil {
 		t.Errorf("FAIL: unexpected successful return: %s", route)
 	}
-
 }
 
 func checkRouter(t *testing.T, rt *router, path, method string, expRoute *Route, expArgs ...PathItem) {
@@ -40,7 +44,6 @@ func checkRouter(t *testing.T, rt *router, path, method string, expRoute *Route,
 	for i, exp := range expArgs {
 		if i >= len(args) {
 			t.Errorf("FAIL: missing arg for '%s %s' -> %s", method, path, exp)
-
 		} else if args[i] != exp.Name {
 			t.Errorf("FAIL: unexpected arg value for '%s %s' -> %s != %s",
 				method, path, args[i], exp.Name)
@@ -48,6 +51,7 @@ func checkRouter(t *testing.T, rt *router, path, method string, expRoute *Route,
 	}
 }
 
+// nolint Function 'TestRouter' has too many statements (52 > 40) (funlen)
 func TestRouter(t *testing.T) {
 	h0 := func() {}
 	h1 := func(a int) {}
