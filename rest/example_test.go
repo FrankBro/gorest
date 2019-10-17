@@ -18,7 +18,6 @@ func (*PingService) PingError() error  { return errors.New("BOOM") }
 // RESTRoutes implements the rest.Routable interface which is used by
 // rest.Endpoint to route incoming HTTP request to the appropriate handler.
 func (svc *PingService) RESTRoutes() rest.Routes {
-
 	return rest.Routes{
 
 		// Route with no arguments provided in the path means that the argument
@@ -50,15 +49,19 @@ func (svc *PingService) RESTRoutes() rest.Routes {
 	}
 }
 
-func ExamplePing() {
-
+func Example() {
 	// Add our service that implements the rest.Routable interface to our
 	// endpoint. We can also add simple lambda functions to our endpoint.
 	rest.AddService(new(PingService))
 	rest.AddRoute("/simple", "POST", func(tick int) int { return tick })
 
 	// The endpoint is started like any other http.Server.
-	go rest.ListenAndServe(":12345", nil)
+	go func() {
+		err := rest.ListenAndServe(":12345", nil)
+		if err != nil {
+			panic("Whoops!")
+		}
+	}()
 
 	// The rest package also provides a way to query a REST endpoint by
 	// incrementally building a REST request. The body of the query can be set
